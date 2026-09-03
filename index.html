@@ -8,7 +8,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Shana Tova 5787">
 <meta property="og:description" content="Dip the apple, sound the shofar, open the pomegranate. A sweet new year from Universal Recycling Company.">
-<meta property="og:image" content="https://danielzar1.github.io/shana-tova-5787/og.png">
+<meta property="og:image" content="https://shanatova.universalrecycling.co.za/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
@@ -414,12 +414,12 @@ const Sound = (() => {
   function holdStop(){ if (held) { held.stop(); held=null; } }
   function chime(){ const c=resume(); const t=c.currentTime;
     [[880,0],[1318,.06],[1760,.12]].forEach(([fr,dl])=>{ const o=c.createOscillator(); o.type='sine'; o.frequency.value=fr; const g=c.createGain(); g.gain.setValueAtTime(0,t+dl); g.gain.linearRampToValueAtTime(.18,t+dl+.02); g.gain.exponentialRampToValueAtTime(.0008,t+dl+1.4); o.connect(g); g.connect(master); o.start(t+dl); o.stop(t+dl+1.5); }); }
-  let lastPlip=0;
+  let lastPlip=0, lastPlop=0;
   function fx(kind){
     const c=resume(); const t=c.currentTime;
     const tone=(f0,f1,dur,vol,type='sine')=>{ const o=c.createOscillator(); o.type=type; o.frequency.setValueAtTime(f0,t); o.frequency.exponentialRampToValueAtTime(f1,t+dur); const g=c.createGain(); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+.015); g.gain.exponentialRampToValueAtTime(.0008,t+dur+.12); o.connect(g); g.connect(master); o.start(t); o.stop(t+dur+.2); };
     const hiss=(f0,f1,dur,vol,q=1.2)=>{ const n=c.createBufferSource(); n.buffer=noiseBuf; const f=c.createBiquadFilter(); f.type='bandpass'; f.Q.value=q; f.frequency.setValueAtTime(f0,t); f.frequency.exponentialRampToValueAtTime(f1,t+dur); const g=c.createGain(); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+.03); g.gain.exponentialRampToValueAtTime(.0008,t+dur); n.connect(f); f.connect(g); g.connect(master); n.start(t); n.stop(t+dur+.05); };
-    if (kind==='plop'){ tone(380,80,.22,.4); hiss(900,250,.14,.18,.8); }
+    if (kind==='plop'){ if (t-lastPlop<.35) return; lastPlop=t; tone(420,70,.26,.55); tone(160,55,.3,.35,'triangle'); hiss(1400,220,.22,.28,.7); }
     else if (kind==='lift'){ hiss(280,2200,.42,.16,1.5); tone(170,460,.36,.14,'triangle'); }
     else if (kind==='plip'){ if (t-lastPlip<.09) return; lastPlip=t; tone(1500+Math.random()*500,600,.07,.09); }
     else if (kind==='pour'){ hiss(600,1400,.5,.07,.6); }
@@ -427,8 +427,15 @@ const Sound = (() => {
   return { resume, call, holdStart, holdStop, chime, fx, get ctx(){ return ctx; } };
 })();
 
-const unlock = () => { try { Sound.resume(); } catch(e){} };
-['touchend','pointerdown','keydown'].forEach(ev => addEventListener(ev, unlock, {once:true, passive:true}));
+const unlockEvents = ['touchstart','touchend','pointerdown','pointerup','click','keydown'];
+function unlock(){
+  try {
+    const c = Sound.resume();
+    if (c.state === 'running') { unlockEvents.forEach(ev => removeEventListener(ev, unlock)); return; }
+    const b = c.createBuffer(1, 1, 22050), src = c.createBufferSource(); src.buffer = b; src.connect(c.destination); src.start(0);
+  } catch(e){}
+}
+unlockEvents.forEach(ev => addEventListener(ev, unlock, {passive:true}));
 
 /* ================= achievements ================= */
 const done = { dip:false, call:false, seed:false };
@@ -503,7 +510,7 @@ const io = new IntersectionObserver(es => es.forEach(e => visible.set(e.target.i
     const velY = apple.y-apple.py, velX = apple.x-apple.px; apple.px=apple.x; apple.py=apple.y;
     const bottom = apple.y+apple.r, surf = surfAt(apple.x);
     const wasIn = apple.inHoney; apple.inHoney = bottom > surf;
-    if (!wasIn && apple.inHoney && velY > .3) { try { Sound.fx('plop'); } catch(e){} }
+    if (!wasIn && apple.inHoney) { try { Sound.fx('plop'); } catch(e){} }
     if (apple.inHoney){
       const dip = bottom-surf; apple.maxDip=Math.max(apple.maxDip,dip);
       if (Math.abs(velY)>.4 && dip < apple.r*1.6) disturb(apple.x, velY*.28, apple.r*1.3);
