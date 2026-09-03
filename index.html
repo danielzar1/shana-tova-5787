@@ -1,3 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#241738">
+<meta name="description" content="Dip the apple, sound the shofar, open the pomegranate. A sweet new year from Universal Recycling Company.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Shana Tova 5787">
+<meta property="og:description" content="Dip the apple, sound the shofar, open the pomegranate. A sweet new year from Universal Recycling Company.">
+<meta property="og:image" content="https://danielzar1.github.io/shana-tova-5787/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8D%8E%3C/text%3E%3C/svg%3E">
 <title>Shana Tova 5787</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300;1,9..144,600&family=Amatic+SC:wght@400;700&family=Anton&family=Nunito:ital,wght@0,400;0,600;0,800;1,400&display=swap">
@@ -134,6 +149,30 @@
   .toast .t{font-family:var(--hand);font-size:24px;line-height:1;color:var(--pome)}
   #confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:25}
 
+  @media (max-width:480px){
+    body{font-size:16px}
+    .scene{padding:60px 18px 40px}
+    .inner{gap:14px}
+    .eyebrow{font-size:23px}
+    .lede{font-size:15.5px}
+    .caption{font-size:26px}
+    #cover{padding-top:28px}
+    .count{width:100%;max-width:320px;gap:8px}
+    .count div{min-width:0;flex:1;padding:8px 4px}
+    .count b{font-size:26px}
+    .card{padding:26px 20px 22px}
+    .blessing{font-size:20px}
+    .signoff{font-size:30px}
+    .wish{font-size:26px}
+    .renew{font-size:15px}
+    .calls{gap:8px}
+    .call-btn{padding:10px 12px}
+    .call-btn b{font-size:18px}
+    .form input,.form textarea{font-size:16px}
+    .btns{width:100%}
+    .btn{flex:1 1 auto;text-align:center}
+    #pass{padding-bottom:56px}
+  }
   @media (prefers-reduced-motion:reduce){
     #cover{animation:none;background-position:0 100%}
     #sun{animation:none;opacity:.95;transform:translate(-50%,0)}
@@ -145,6 +184,9 @@
     .calls{grid-template-columns:repeat(4,1fr)}
   }
 </style>
+</head>
+<body>
+
 
 <!-- progress -->
 <div class="sweet" id="sweet" aria-live="polite">
@@ -719,3 +761,6 @@ function finale(){
 })();
 })();
 </script>
+
+</body>
+</html>
