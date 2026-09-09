@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-YgPJRF2q1t8rFTdjY56rwVp5u1qdZzDzJ3Zs39AdkGY='; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-ancestors 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-p/bGVP35I+HmGU4HzPtuFRzv3aOI27aXnvymAMbskZ8='; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-ancestors 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#241738">
@@ -528,7 +528,7 @@ const io = new IntersectionObserver(es => es.forEach(e => visible.set(e.target.i
       if (d > s.max || apple.inHoney){ if(!apple.inHoney) drops.push({x:lerp(ax,s.fx,.6), y:lerp(ay,fy,.6), vy:0, r:3+Math.random()*2}); return false; } return true; });
     // drips from glazed apple
     if (apple.glaze>.5 && !apple.inHoney && t-apple.lastDrip > 70+Math.random()*120){ apple.lastDrip=t; drops.push({x:apple.x+(Math.random()-.5)*apple.r*1.2, y:apple.y+apple.r*.95, vy:0, r:2.5+Math.random()*2.5}); }
-    drops = drops.filter(dr => { dr.vy+=.35; dr.y+=dr.vy; if (dr.x>jar.l && dr.x<jar.r && dr.y >= surfAt(dr.x)){ disturb(dr.x, 2.2, 22); try { Sound.fx('plip'); } catch(e){} return false; } return dr.y < H+20; });
+    drops = drops.filter(dr => { dr.vy+=.35; dr.y+=dr.vy; if (dr.x>jar.l && dr.x<jar.r && dr.y >= surfAt(dr.x)){ disturb(dr.x, 2.2, 22); return false; } return dr.y < H+20; });
     stepName();
     stepWave();
   }
@@ -556,7 +556,7 @@ const io = new IntersectionObserver(es => es.forEach(e => visible.set(e.target.i
       if (q.gone) continue; alive++;
       if (e < 1.1){ const u=clamp((e-q.d)/.55,0,1), k=u*u*(3-2*u); q.x=lerp(q.sx,q.tx,k); q.y=lerp(q.sy,q.ty,k)+Math.sin(u*Math.PI)*6; }
       else if (e < 3.4){ q.x=q.tx; q.y=q.ty+Math.sin(t/9+q.tx*.2)*.5; }
-      else if (e-3.4 > q.m){ q.vy+=.28; q.y+=q.vy; q.x+=Math.sin(t/7+q.ty)*.15; if (q.y >= surfAt(q.x)){ q.gone=true; if (Math.random()<.12){ disturb(q.x,1.2,14); try { Sound.fx('plip'); } catch(e2){} } } }
+      else if (e-3.4 > q.m){ q.vy+=.28; q.y+=q.vy; q.x+=Math.sin(t/7+q.ty)*.15; if (q.y >= surfAt(q.x)){ q.gone=true; if (Math.random()<.12) disturb(q.x,1.2,14); } }
     }
     if (!alive) nameFx=null;
   }
