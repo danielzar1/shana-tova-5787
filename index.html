@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-p/bGVP35I+HmGU4HzPtuFRzv3aOI27aXnvymAMbskZ8='; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-ancestors 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-TqV7L12rDxbaeBYzBZn5M/K/qxjRhLALrMKcuBWQjJo='; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-ancestors 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#241738">
@@ -75,7 +75,7 @@
   .count b{font-family:var(--display);font-weight:600;font-size:30px;line-height:1}
   .count span{font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.75;margin-top:4px}
   .count-note{font-family:var(--hand);font-size:24px;color:var(--honey-light);line-height:1}
-  .scrollhint{margin-top:14px;font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;opacity:.8;animation:bob 2s ease-in-out infinite}
+  .begin{margin-top:14px;padding:14px 26px;border-radius:999px;border:0;background:var(--honey);color:var(--ink);font-size:14px;letter-spacing:.12em;text-transform:uppercase;font-weight:800;box-shadow:0 12px 30px -10px rgba(201,124,0,.6);animation:bob 2s ease-in-out infinite}
   @keyframes bob{50%{transform:translateY(6px)}}
 
   /* ---------- honey scene ---------- */
@@ -110,12 +110,6 @@
   .call-btn b{font-family:var(--display);font-weight:600;font-size:20px;line-height:1.1}
   .call-btn span{font-size:12px;color:var(--ink-soft);letter-spacing:.02em}
   .call-btn.hold{border-style:dashed}
-  .mic{display:flex;align-items:center;gap:12px;width:100%;padding:12px 16px;border-radius:999px;border:0;background:var(--night);color:var(--cream);font-weight:800;letter-spacing:.02em;justify-content:center;transition:background .3s}
-  .mic.live{background:var(--pome)}
-  .mic .lvl{width:64px;height:8px;border-radius:99px;background:rgba(255,246,229,.2);overflow:hidden}
-  .mic .lvl i{display:block;height:100%;width:0;background:var(--honey);transition:width .08s}
-  .mic-note{font-size:13px;color:var(--ink-soft)}
-
   /* ---------- pomegranate scene ---------- */
   #seeds{background:linear-gradient(180deg,var(--cream-deep) 0%,var(--cream) 100%)}
   #pome{width:min(100%,460px);height:360px;display:block;touch-action:manipulation;cursor:pointer}
@@ -164,7 +158,7 @@
   @media (prefers-reduced-motion:reduce){
     #cover{animation:none;background-position:0 100%}
     #sun{animation:none;opacity:.95;transform:translate(-50%,0)}
-    .bee,.scrollhint,.playing .horn{animation:none}
+    .bee,.begin,.playing .horn{animation:none}
     html{scroll-behavior:auto}
   }
   @supports (offset-path: path("M0 0 L1 1")){ .bee{display:block} }
@@ -200,7 +194,7 @@
       <div><b id="c-s">–</b><span>secs</span></div>
     </div>
     <div class="count-note" id="count-note">until the year 5787 begins</div>
-    <div class="scrollhint">Scroll ↓ three sweet things to do</div>
+    <button class="begin" id="begin">Tap to begin, sound on ↓</button>
   </div>
 </section>
 
@@ -225,7 +219,7 @@
   <div class="inner">
     <div class="eyebrow">Two · the shofar</div>
     <h2>Sound the shofar</h2>
-    <p class="lede">A hundred blasts are sounded on Rosh Hashanah. Here are the four, or blow into your phone and sound your own.</p>
+    <p class="lede">A hundred blasts are sounded on Rosh Hashanah. Here are the four. Tap one, or press and hold the last for a great blast.</p>
     <div class="horn-wrap" id="horn-wrap">
       <svg viewBox="0 0 320 200" aria-hidden="true">
         <defs>
@@ -249,8 +243,6 @@
       <button class="call-btn" data-call="teruah"><b>Teruah</b><span>nine quick blasts</span></button>
       <button class="call-btn hold" id="gedolah"><b>Tekiah Gedolah</b><span>press and hold</span></button>
     </div>
-    <button class="mic" id="mic"><span id="mic-text">Blow into your phone</span><span class="lvl"><i id="lvl"></i></span></button>
-    <p class="mic-note" id="mic-note">Uses your microphone only while this page is open. Nothing is recorded.</p>
     <p class="caption" id="cap-call">You heard the call. Wake up, it's a new year.</p>
   </div>
 </section>
@@ -393,7 +385,7 @@ const Sound = (() => {
   function holdStop(){ if (held) { held.stop(); held=null; } }
   function chime(){ const c=resume(); const t=c.currentTime;
     [[880,0],[1318,.06],[1760,.12]].forEach(([fr,dl])=>{ const o=c.createOscillator(); o.type='sine'; o.frequency.value=fr; const g=c.createGain(); g.gain.setValueAtTime(0,t+dl); g.gain.linearRampToValueAtTime(.18,t+dl+.02); g.gain.exponentialRampToValueAtTime(.0008,t+dl+1.4); o.connect(g); g.connect(master); o.start(t+dl); o.stop(t+dl+1.5); }); }
-  let lastPlip=0, lastPlop=0;
+  let lastPlip=-1, lastPlop=-1;
   function fx(kind, power=1){
     const c=resume();
     if (c.state!=='running'){ c.resume().then(()=>play(kind, power)).catch(()=>{}); return; }
@@ -432,6 +424,8 @@ function unlock(){
   } catch(e){}
 }
 unlockEvents.forEach(ev => addEventListener(ev, unlock, {passive:true}));
+
+$('#begin').addEventListener('click', () => { unlock(); try { Sound.chime(); } catch(e){} document.getElementById('dip').scrollIntoView({behavior: reduced ? 'auto' : 'smooth'}); });
 
 /* ================= achievements ================= */
 const done = { dip:false, call:false, seed:false };
@@ -686,33 +680,6 @@ const io = new IntersectionObserver(es => es.forEach(e => visible.set(e.target.i
   ged.addEventListener('keydown', e => { if (e.key===' '||e.key==='Enter'){ e.preventDefault(); if(!holding){ holding=true; Sound.holdStart(); playing(Infinity);} } });
   ged.addEventListener('keyup', stop);
 
-  /* microphone breath */
-  const mic=$('#mic'), lvl=$('#lvl'), micText=$('#mic-text'), note=$('#mic-note');
-  let stream, analyser, data, floor=0, blowing=false, quietSince=0, raf;
-  mic.addEventListener('click', async () => {
-    if (stream){ stopMic(); return; }
-    try {
-      const c=Sound.resume();
-      stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
-      const src=c.createMediaStreamSource(stream); analyser=c.createAnalyser(); analyser.fftSize=1024; src.connect(analyser); data=new Float32Array(analyser.fftSize);
-      mic.classList.add('live'); micText.textContent='Listening. Blow!'; note.textContent='Blow steadily across the microphone. Tap again to stop.';
-      floor=0; const t0=performance.now(); listen(t0);
-    } catch(err){ note.textContent='The microphone isn\'t available here, so press and hold Tekiah Gedolah instead.'; micText.textContent='Microphone unavailable'; }
-  });
-  function listen(t0){
-    analyser.getFloatTimeDomainData(data); let sum=0; for(let i=0;i<data.length;i++) sum+=data[i]*data[i]; const rms=Math.sqrt(sum/data.length);
-    const now=performance.now();
-    if (now-t0 < 900) floor=Math.max(floor,rms); // calibrate to room noise
-    const thr=Math.max(.06, floor*2.5+.03);
-    lvl.style.width = clamp(rms/(thr*2)*100,0,100)+'%';
-    if (now-t0 >= 900){
-      if (rms>thr){ if(!blowing){ blowing=true; Sound.holdStart(); playing(Infinity); } quietSince=0; }
-      else if (blowing){ if(!quietSince) quietSince=now; else if (now-quietSince>260){ blowing=false; Sound.holdStop(); stopVis(); achieve('call','You blew it!','In the best way. The shofar is sounded.'); } }
-    }
-    raf=requestAnimationFrame(()=>listen(t0));
-  }
-  function stopMic(){ cancelAnimationFrame(raf); stream.getTracks().forEach(t=>t.stop()); stream=null; if(blowing){ blowing=false; Sound.holdStop(); stopVis(); } mic.classList.remove('live'); micText.textContent='Blow into your phone'; lvl.style.width='0'; note.textContent='Uses your microphone only while this page is open. Nothing is recorded.'; }
-  addEventListener('pagehide', () => { if (stream) stopMic(); });
 })();
 
 /* ================= SCENE 3: pomegranate → 613 seeds ================= */
