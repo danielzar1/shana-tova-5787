@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-iG6L3azHscGwTj21ohzeWub/3UzS+MryGTBSEHSAu6w='; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-ancestors 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-hzTdR1SgSaGFUHBPRK9CeuA1FvsgychWwvwkOGsF+Kw='; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-ancestors 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#241738">
@@ -132,20 +132,7 @@
   .wish{font-family:var(--hand);font-size:30px;line-height:1.1;color:var(--ink);background:#FFF1B8;padding:16px 18px 14px;transform:rotate(-1.5deg);box-shadow:0 8px 20px -10px rgba(42,30,20,.4);max-width:100%;overflow-wrap:anywhere}
   .wish small{display:block;font-family:var(--body);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:4px;font-weight:800}
 
-  /* ---------- pass it on ---------- */
-  #pass{background:var(--night);color:var(--cream);min-height:auto;padding-bottom:80px}
-  #pass .eyebrow{color:var(--honey-light)}
-  #pass .lede{color:rgba(255,246,229,.8)}
-  .form{width:100%;display:grid;gap:10px}
-  .form label{display:grid;gap:4px;text-align:left;font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:800;color:rgba(255,246,229,.7)}
-  .form input,.form textarea{font:inherit;padding:11px 14px;border-radius:12px;border:1px solid rgba(255,246,229,.25);background:rgba(255,246,229,.08);color:var(--cream);width:100%}
-  .form textarea{min-height:70px;resize:vertical}
-  .form input::placeholder,.form textarea::placeholder{color:rgba(255,246,229,.4)}
-  .btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
-  .btn{padding:12px 20px;border-radius:999px;border:0;font-weight:800;letter-spacing:.02em;background:var(--honey);color:var(--ink)}
-  .btn.ghost{background:transparent;border:2px solid rgba(255,246,229,.4);color:var(--cream)}
-  .linkbox{width:100%;font-size:12px;word-break:break-all;background:rgba(255,246,229,.08);border-radius:10px;padding:10px 12px;color:rgba(255,246,229,.75);text-align:left;font-family:ui-monospace,Menlo,Consolas,monospace;user-select:all;-webkit-user-select:all}
-  footer{background:var(--night);color:rgba(255,246,229,.55);text-align:center;font-size:13px;padding:0 20px 28px;letter-spacing:.04em}
+  footer{background:var(--night);color:rgba(255,246,229,.55);text-align:center;font-size:13px;padding:36px 20px 32px;letter-spacing:.04em}
   footer b{color:var(--honey-light);font-family:var(--hand);font-size:22px;font-weight:400;letter-spacing:.06em}
 
   /* ---------- toast + confetti ---------- */
@@ -173,10 +160,6 @@
     .calls{gap:8px}
     .call-btn{padding:10px 12px}
     .call-btn b{font-size:18px}
-    .form input,.form textarea{font-size:16px}
-    .btns{width:100%;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-    .btn{padding:12px 8px;text-align:center;font-size:15px}
-    #pass{padding-bottom:56px}
   }
   @media (prefers-reduced-motion:reduce){
     #cover{animation:none;background-position:0 100%}
@@ -297,25 +280,6 @@
   </div>
 </section>
 
-<!-- PASS IT ON -->
-<section class="scene" id="pass">
-  <div class="inner">
-    <div class="eyebrow">Pass the sweetness on</div>
-    <h2>Send it to someone you love</h2>
-    <p class="lede">Put their name on the cover, add a wish of your own, and share the link. The honey, the shofar and the seeds all go with it.</p>
-    <div class="form">
-      <label>Their name<input id="f-to" placeholder="e.g. Sarah" maxlength="40" autocomplete="off"></label>
-      <label>Your name<input id="f-from" placeholder="e.g. Daniel" maxlength="40" autocomplete="off"></label>
-      <label>A wish (optional)<textarea id="f-wish" placeholder="May this be the year you finally take that holiday." maxlength="220"></textarea></label>
-    </div>
-    <div class="btns">
-      <button class="btn" id="share">Share</button>
-      <button class="btn ghost" id="copy">Copy link</button>
-      <a class="btn ghost" id="wa" href="#" target="_blank" rel="noopener" style="text-decoration:none">WhatsApp</a>
-    </div>
-    <div class="linkbox" id="linkbox" hidden></div>
-  </div>
-</section>
 <footer><b>שנה טובה ומתוקה</b><br>5787 · Universal Recycling Company · made with honey and code</footer>
 
 <div class="toast" id="toast"><span class="t" id="toast-t"></span><span id="toast-m"></span></div>
@@ -818,27 +782,6 @@ function finale(){
     if (alive && now-t0<9000) requestAnimationFrame(f); else ctx.clearRect(0,0,W,H); })(t0);
   toast('Shana Tova!', 'All three done. A sweet year is yours.');
 }
-
-/* ================= pass it on ================= */
-(() => {
-  const base = location.origin + location.pathname;
-  const fTo=$('#f-to'), fFrom=$('#f-from'), fWish=$('#f-wish'), box=$('#linkbox'), wa=$('#wa');
-  if (TO) fFrom.value = TO; // the person receiving it is the one most likely to pass it on
-  function link(){ const p=new URLSearchParams(); if(fTo.value.trim()) p.set('to',fTo.value.trim()); if(fFrom.value.trim()) p.set('from',fFrom.value.trim()); if(fWish.value.trim()) p.set('wish',fWish.value.trim()); const s=p.toString(); return base + (s?'?'+s:''); }
-  function msg(){ const n=fTo.value.trim(); return `Shana Tova${n?', '+n:''}! Dip an apple, sound the shofar, open the pomegranate: ${link()}`; }
-  function refresh(){ wa.href = 'https://wa.me/?text=' + encodeURIComponent(msg()); }
-  [fTo,fFrom,fWish].forEach(el => el.addEventListener('input', refresh)); refresh();
-  $('#share').addEventListener('click', async () => {
-    const url=link(); box.textContent=url; box.hidden=false;
-    if (navigator.share){ try { await navigator.share({title:'Shana Tova 5787', text:msg().replace(url,'').trim(), url}); toast('Sent!','May it land sweetly.'); } catch(e){} }
-    else toast('Here\'s your link','Copy it below and send it on.');
-  });
-  $('#copy').addEventListener('click', async () => {
-    const url=link(); box.textContent=url; box.hidden=false;
-    try { await navigator.clipboard.writeText(url); toast('Copied','The link is on your clipboard.'); }
-    catch(e){ toast('Select and copy','Your browser wouldn\'t let me copy it for you.'); }
-  });
-})();
 })();
 </script>
 
